@@ -1,9 +1,9 @@
 import core from "@actions/core";
 import github from "@actions/github";
-import {ReleaseEvent} from "@octokit/webhooks-definitions/schema";
-import ModrinthCreateVersion from "./ModrinthCreateVersion";
-import FilePointer from "./FilePointer";
-import InferData from "./InferData";
+import type {ReleaseEvent} from "@octokit/webhooks-definitions/schema.d.ts";
+import ModrinthCreateVersion from "./ModrinthCreateVersion.js";
+import FilePointer from "./FilePointer.js";
+import InferData from "./InferData.js";
 
 if (github.context.eventName !== "release") {
     core.warning("This action only works for release events. Current event: " + github.context.eventName);

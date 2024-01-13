@@ -1,7 +1,7 @@
-import ModrinthRequest from "./ModrinthRequest";
-import * as crypto from "crypto";
-import Multipart from "./Multipart";
-import FilePointer from "./FilePointer";
+import crypto from "node:crypto";
+import ModrinthRequest from "./ModrinthRequest.js";
+import Multipart from "./Multipart.js";
+import FilePointer from "./FilePointer.js";
 
 export default class ModrinthCreateVersion extends ModrinthRequest {
     // dev: staging-api.modrinth.com; prod: api.modrinth.com

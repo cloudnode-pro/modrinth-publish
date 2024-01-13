@@ -5,8 +5,8 @@
   "compilerOptions": {
     "incremental": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "declaration": false,
     "outDir": "./dist",
     "importsNotUsedAsValues": "remove",

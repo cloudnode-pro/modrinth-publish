@@ -1,4 +1,6 @@
 {
+  "main": "dist/index.js",
+  "type": "module",
   "devDependencies": {
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/js-yaml": "^4.0.9",
