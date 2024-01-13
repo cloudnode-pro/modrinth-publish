@@ -62,7 +62,7 @@ export default class ModrinthCreateVersion extends ModrinthRequest {
             "User-Agent": "github.com/cloudnode-pro/modrinth-publish",
             Authorization: token,
             "Content-Type": `multipart/form-data; boundary=${boundary}`
-        });
+        }, undefined, "POST");
         this.boundary = boundary;
     }
 
