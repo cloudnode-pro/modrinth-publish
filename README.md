@@ -17,7 +17,7 @@ If the event is not `release`, this workflow will be skipped.
 Add the following step to your workflow:
 ```yaml
 - name: Upload to Modrinth
-  uses: cloudnode-pro/modrinth-publish@main
+  uses: cloudnode-pro/modrinth-publish@1.0.0
   with:
     token: ${{ secrets.MODRINTH_TOKEN }}
     project: AABBCCDD
@@ -73,7 +73,7 @@ jobs:
       
       # Upload the .jar to Modrinth
       - name: Upload to Modrinth
-        uses: cloudnode-pro/modrinth-publish@main
+        uses: cloudnode-pro/modrinth-publish@1.0.0
         with:
           token: '${{ secrets.MODRINTH_TOKEN }}' # You need to create this secret in your repository settings
           project: AABBCCDD # Replace with your project id/slug
