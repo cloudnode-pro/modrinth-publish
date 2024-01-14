@@ -47641,7 +47641,6 @@ class ModrinthCreateVersion extends ModrinthRequest {
     token;
     files;
     options;
-    // dev: staging-api.modrinth.com; prod: api.modrinth.com
     static apiDomain = process.env.NODE_ENV === "production" ? "api.modrinth.com" : "staging-api.modrinth.com";
     boundary;
     constructor(token, files, options) {
