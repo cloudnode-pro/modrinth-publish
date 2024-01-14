@@ -27,7 +27,7 @@ const inputs = {
     dependencies: (() => {
         const input = core.getInput("dependencies", {required: false});
         return input === "" ? [] : JSON.parse(input) as {version_id?: string, project_id?: string, file_name?: string, dependency_type: "required" | "optional" | "incompatible" | "embedded"}[]
-    })
+    })(),
 } as const;
 
 core.debug("inputs: " + JSON.stringify(inputs));
@@ -59,7 +59,7 @@ const res = await new ModrinthCreateVersion(inputs.token, [primaryFile], {
     name: inferredData.name,
     version_number: inferredData.version,
     changelog: inputs.changelog,
-    dependencies: [],
+    dependencies: inputs.dependencies,
     game_versions: inferredData.gameVersions,
     version_type: inferredData.version.includes("alpha") ? "alpha" : inferredData.version.includes("beta") || inferredData.version.match(/[^A-z](rc)[^A-z]/) || inferredData.version.match(/[^A-z](pre)[^A-z]/) ? "beta" : "release",
     loaders: inputs.loaders,
