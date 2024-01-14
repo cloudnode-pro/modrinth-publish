@@ -12,17 +12,17 @@ inputs:
     description: Path to file to upload
   changelog:
     required: false
-    description: The changelog for this version (markdown)
+    description: The changelog for this version (markdown). Defaults to GitHub release notes.
   loaders:
     required: true
-    description: The mod loaders that this version supports (separated by commas or as JSON string array)
+    description: The mod loaders that this version supports (separated by commas or as JSON string array). See [createVersion](https://docs.modrinth.com/api-spec#tag/versions/operation/createVersion)
   dependencies:
     required: false
-    description: A list of specific versions of projects that this version depends on (as JSON array). See https://docs.modrinth.com/api-spec#tag/versions/operation/createVersion
+    description: A list of specific versions of projects that this version depends on (as JSON array). See [createVersion](https://docs.modrinth.com/api-spec#tag/versions/operation/createVersion)
     default: "[]"
   api-domain:
     required: false
-    description: Modrinth API domain
+    description: Modrinth API domain. For testing purposes you can set this to `staging-api.modrinth.com`. See [Modrinth Staging Server](https://staging.modrinth.com)
     default: "api.modrinth.com"
 outputs:
   version-id:
