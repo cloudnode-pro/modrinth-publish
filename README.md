@@ -56,7 +56,7 @@ jobs:
       # You could set the version in your repository to something like `0.0.0-SNAPSHOT` and
       # it will always be overwritten to the correct version here when a release is created.
       - name: Set maven project ver
-        run: 'mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}'
+        run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
       
       # This step compiles your Maven project to a `.jar`
       - name: Build and package Maven project
