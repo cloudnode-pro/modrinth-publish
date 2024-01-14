@@ -1,5 +1,5 @@
-import core from "@actions/core";
-import github from "@actions/github";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
 import type {ReleaseEvent} from "@octokit/webhooks-definitions/schema.d.ts";
 import ModrinthCreateVersion from "./ModrinthCreateVersion.js";
 import FilePointer from "./FilePointer.js";

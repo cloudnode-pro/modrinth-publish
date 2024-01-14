@@ -4,7 +4,7 @@ import Multipart from "./Multipart.js";
 import FilePointer from "./FilePointer.js";
 
 export default class ModrinthCreateVersion extends ModrinthRequest {
-    public static apiDomain = process.env.NODE_ENV === "production" ? "api.modrinth.com" : "staging-api.modrinth.com";
+    public static apiDomain = "api.modrinth.com";
     private readonly boundary: string;
     public constructor(public readonly token: string, public readonly files: FilePointer[], public readonly options: {
         /**
