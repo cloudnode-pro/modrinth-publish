@@ -1,10 +1,11 @@
 import crypto from "node:crypto";
+import * as core from "@actions/core";
 import ModrinthRequest from "./ModrinthRequest.js";
 import Multipart from "./Multipart.js";
 import FilePointer from "./FilePointer.js";
 
 export default class ModrinthCreateVersion extends ModrinthRequest {
-    public static apiDomain = "api.modrinth.com";
+    public static apiDomain = core.getInput("api-domain", {required: false});
     private readonly boundary: string;
     public constructor(public readonly token: string, public readonly files: FilePointer[], public readonly options: {
         /**
