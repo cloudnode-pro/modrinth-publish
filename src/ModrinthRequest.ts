@@ -1,4 +1,6 @@
 export default class ModrinthRequest {
+    public readonly headers: Headers;
+
     /**
      * Create a request to the modrinth API
      *
@@ -7,7 +9,9 @@ export default class ModrinthRequest {
      * @param [body] Request body
      * @param [method] Request method
      */
-    public constructor(public readonly url: string, public headers?: Record<string, string>, public body?: string | Buffer, public method: string = "GET") {}
+    public constructor(public readonly url: string, headers?: HeadersInit, public body?: BodyInit | null, public method: string = "GET") {
+        this.headers = new Headers(headers);
+    }
 
     /**
      * Send the request

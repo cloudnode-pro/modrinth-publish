@@ -1,12 +1,10 @@
-import crypto from "node:crypto";
 import * as core from "@actions/core";
+import {Multipart} from "multipart-ts";
 import ModrinthRequest from "./ModrinthRequest.js";
-import Multipart from "./Multipart.js";
 import FilePointer from "./FilePointer.js";
 
 export default class ModrinthCreateVersion extends ModrinthRequest {
     public static apiDomain = core.getInput("api-domain", {required: false});
-    private readonly boundary: string;
     public constructor(public readonly token: string, public readonly files: FilePointer[], public readonly options: {
         /**
          * The name of this version
@@ -57,34 +55,26 @@ export default class ModrinthCreateVersion extends ModrinthRequest {
         project_id: string;
     }) {
         if (files.length === 0) throw new RangeError("No files provided");
-        const boundary = crypto.randomUUID();
         super(`https://${ModrinthCreateVersion.apiDomain}/v2/version`, {
             "User-Agent": "github.com/cloudnode-pro/modrinth-publish",
             Authorization: token,
-            "Content-Type": `multipart/form-data; boundary=${boundary}`
         }, undefined, "POST");
-        this.boundary = boundary;
     }
 
     public override async send(): Promise<Response> {
         const primaryFile = this.files[0]!;
-        this.body = new Multipart(this.boundary,
-            new Multipart.Part({
-                "Content-Disposition": 'form-data; name="data"',
-            }, JSON.stringify({
-                ...this.options,
-                file_parts: [primaryFile.name + "-primary", ...this.files.slice(1).map(file => file.name)],
-                primary_file: primaryFile.name + "-primary",
-            })),
-            new Multipart.Part({
-                "Content-Disposition": `form-data; name="${primaryFile.name}-primary"; filename="${primaryFile.name}"`,
-                "Content-Type": "application/octet-stream",
-            }, await primaryFile.read()),
-            ...await Promise.all(this.files.slice(1).map(async file => new Multipart.Part({
-                "Content-Disposition": `form-data; name="${file.name}"; filename="${file.name}"`,
-                "Content-Type": "application/octet-stream",
-            }, await file.read()))),
-        ).toBuffer();
+        const formData = new FormData();
+        formData.set("data", JSON.stringify({
+            ...this.options,
+            file_parts: [primaryFile.name + "-primary", ...this.files.slice(1).map(file => file.name)],
+            primary_file: primaryFile.name + "-primary",
+        }));
+        formData.set(primaryFile.name + "-primary", new File([await primaryFile.read()], primaryFile.name));
+        for (const file of this.files.slice(1))
+            formData.set(file.name, new File([await file.read()], file.name));
+        const multipart = await Multipart.formData(formData);
+        this.headers.set("Content-Type", multipart.headers.get("Content-Type")!);
+        this.body = multipart.body;
         return await super.send();
     }
 }
