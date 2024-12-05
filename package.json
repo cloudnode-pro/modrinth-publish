@@ -15,7 +15,6 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "js-yaml": "^4.1.0",
-    "jszip": "^3.10.1",
-    "multipart-ts": "^1.2.1"
+    "jszip": "^3.10.1"
   }
 }

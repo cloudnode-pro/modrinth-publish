@@ -1,5 +1,4 @@
 import * as core from "@actions/core";
-import {Multipart} from "multipart-ts";
 import ModrinthRequest from "./ModrinthRequest.js";
 import FilePointer from "./FilePointer.js";
 
@@ -72,9 +71,7 @@ export default class ModrinthCreateVersion extends ModrinthRequest {
         formData.set(primaryFile.name + "-primary", new File([await primaryFile.read()], primaryFile.name));
         for (const file of this.files.slice(1))
             formData.set(file.name, new File([await file.read()], file.name));
-        const multipart = await Multipart.formData(formData);
-        this.headers.set("Content-Type", multipart.headers.get("Content-Type")!);
-        this.body = multipart.body;
+        this.body = formData;
         return await super.send();
     }
 }
