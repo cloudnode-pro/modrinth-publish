@@ -9,7 +9,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.11.0",
     "@vercel/ncc": "^0.38.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
