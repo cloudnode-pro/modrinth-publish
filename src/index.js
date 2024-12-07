@@ -3,24 +3,26 @@ import path from "node:path";
 import * as core from "@actions/core";
 import {VersionsManifest} from "./VersionsManifest.js";
 
+const GH_INPUTS = JSON.parse(process.env.GH_INPUTS);
+
 // Action inputs
 const inputs = {
-    apiDomain: core.getInput("api-domain"),
-    token: core.getInput("token", {required: true}),
-    project: core.getInput("project", {required: true}),
-    name: core.getInput("name"),
-    version: core.getInput("version", {required: true}),
-    channel: core.getInput("channel"),
-    featured: core.getInput("featured"),
-    changelog: core.getInput("changelog"),
-    loaders: core.getInput("loaders", {required: true}),
-    gameVersions: core.getInput("game-versions"),
-    files: core.getInput("files", {required: true}),
-    primaryFile: core.getInput("primary-file"),
-    dependencies: core.getInput("dependencies"),
-    status: core.getInput("status"),
-    requestedStatus: core.getInput("requested-status")
-};
+    apiDomain: GH_INPUTS["api-domain"],
+    token: GH_INPUTS.token,
+    project: GH_INPUTS.project,
+    name: GH_INPUTS.name,
+    version: GH_INPUTS.version,
+    channel: GH_INPUTS.channel,
+    featured: GH_INPUTS.featured,
+    changelog: GH_INPUTS.changelog,
+    loaders: GH_INPUTS.loaders,
+    gameVersions: GH_INPUTS["game-versions"],
+    files: GH_INPUTS.files,
+    primaryFile: GH_INPUTS["primary-file"],
+    dependencies: GH_INPUTS.dependencies,
+    status: GH_INPUTS.status,
+    requestedStatus: GH_INPUTS["requested-status"]
+}
 
 // Set input defaults
 if (inputs.name === "")
@@ -31,7 +33,7 @@ if (inputs.channel === "") {
         inputs.channel = "alpha";
     else if (/\b(rc\d*|pre\d*|beta)\b/.test(inputs.version.toLowerCase()))
         inputs.channel = "beta";
-    inputs.channel = "release";
+    else inputs.channel = "release";
 }
 
 if (inputs.featured === "")
@@ -41,7 +43,7 @@ if (inputs.featured === "")
 core.info("Parsing inputs…");
 const featured = typeof inputs.featured === "boolean" ? inputs.featured : inputs.featured === "true";
 const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
-const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase());
+const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
 const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) : inputs.files.split("\n").map(l => l.trim());
 const dependencies = JSON.parse(inputs.dependencies);
 
@@ -75,8 +77,8 @@ if (gameVersions.some(v => /^\d+\.\d+\.x$/.test(v))) {
     const versionsManifest = await VersionsManifest.fetch();
     for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/.test(v))) {
         const index = gameVersions.indexOf(version);
-        const baseVersion = version.slice(0, -1);
-        const versions = versionsManifest.versions.filter(v => v.startsWith(baseVersion));
+        const baseVersion = version.slice(0, -2);
+        const versions = versionsManifest.versions.filter(v => v === baseVersion || v.startsWith(baseVersion + "."));
         gameVersions.splice(index, 1, ...versions);
     }
 }
@@ -103,7 +105,7 @@ formData.set("data", JSON.stringify({
 for (const file of files)
     formData.set(file.name, file, file.name);
 
-const res = await fetch(`https://${inputs.apiDomain}/api/v2/version`, {
+const res = await fetch(`https://${inputs.apiDomain}/v2/version`, {
     method: "POST",
     headers: {
         "User-Agent": "github.com/cloudnode-pro/modrinth-publish",
