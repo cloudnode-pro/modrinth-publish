@@ -1,20 +1,14 @@
 {
-  "main": "src/index.ts",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "build": "ncc build"
-  },
-  "devDependencies": {
-    "@octokit/webhooks-definitions": "^3.67.3",
-    "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.10.1",
-    "@vercel/ncc": "^0.38.3",
-    "typescript": "^5.7.2"
+    "build": "tsc"
   },
   "dependencies": {
-    "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.0",
-    "js-yaml": "^4.1.0",
-    "jszip": "^3.10.1"
+    "@actions/core": "^1.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
   }
 }

@@ -1,36 +1,33 @@
 {
   "include": [
-    "src"
+    "src/**/*"
   ],
   "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
     "incremental": true,
-    "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "declaration": false,
+    "target": "esnext",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "inlineSourceMap": true,
     "outDir": "./dist",
+    "declaration": false,
+    "removeComments": false,
+    "importHelpers": true,
     "importsNotUsedAsValues": "remove",
     "stripInternal": true,
     "noEmitOnError": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "preserveSymlinks": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "allowUnusedLabels": true,
-    "allowUnreachableCode": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
     "skipLibCheck": true
   }
 }

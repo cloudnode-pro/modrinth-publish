@@ -1,83 +1,135 @@
-import * as core from "@actions/core";
-import * as github from "@actions/github";
-import type {ReleaseEvent} from "@octokit/webhooks-definitions/schema.d.ts";
-import ModrinthCreateVersion from "./ModrinthCreateVersion.js";
-import FilePointer from "./FilePointer.js";
-import InferData from "./InferData.js";
+import fs from "node:fs/promises";
+import path from "node:path";
+import http from "node:http";
+import core from "@actions/core";
+import {VersionsManifest} from "./VersionsManifest.js";
 
-if (github.context.eventName !== "release") {
-    core.warning("This action only works for release events. Current event: " + github.context.eventName);
+const GH_INPUTS: Record<string, string> = JSON.parse(process.env.GH_INPUTS!);
+
+// Action inputs
+const inputs = {
+    apiDomain: GH_INPUTS["api-domain"]!,
+    token: GH_INPUTS.token!,
+    project: GH_INPUTS.project!,
+    name: GH_INPUTS.name!,
+    version: GH_INPUTS.version!,
+    channel: GH_INPUTS.channel!,
+    featured: GH_INPUTS.featured!,
+    changelog: GH_INPUTS.changelog!,
+    loaders: GH_INPUTS.loaders!,
+    gameVersions: GH_INPUTS["game-versions"]!,
+    files: GH_INPUTS.files!,
+    primaryFile: GH_INPUTS["primary-file"]!,
+    dependencies: GH_INPUTS.dependencies!,
+    status: GH_INPUTS.status!,
+    requestedStatus: GH_INPUTS["requested-status"]!,
+}
+
+// Set input defaults
+if (inputs.name === "")
+    inputs.name = inputs.version;
+
+if (inputs.channel === "") {
+    if (/\balpha\b/.test(inputs.version.toLowerCase()))
+        inputs.channel = "alpha";
+    else if (/\b(rc\d*|pre\d*|beta)\b/.test(inputs.version.toLowerCase()))
+        inputs.channel = "beta";
+    else inputs.channel = "release";
+}
+
+if (inputs.featured === "")
+    inputs.featured = inputs.channel === "release" ? "true" : "false";
+
+// Parse inputs
+core.info("Parsing inputs…");
+const featured = inputs.featured === "true";
+const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
+const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
+const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) as string[] : inputs.files.split("\n").map(l => l.trim());
+const dependencies = JSON.parse(inputs.dependencies);
+
+const changelog = inputs.changelog === "" ? null : inputs.changelog;
+const primaryFileName = inputs.primaryFile === "" ? null : inputs.primaryFile;
+const requestedStatus = inputs.requestedStatus === "" ? null : inputs.requestedStatus;
+
+// Read files
+core.info("Reading files…");
+const fileTypesMap: Record<string, string> = {
+    ".mrpack": "application/x-modrinth-modpack+zip",
+    ".jar": "application/java-archive",
+    ".zip": "application/zip",
+};
+
+const files = await Promise.all(filePaths.map(async filePath => {
+    const type = fileTypesMap[path.extname(filePath)];
+    const data = await fs.readFile(filePath);
+    return new File([data], path.basename(filePath), {type});
+}));
+
+// If primary file is specified, check that it is present
+if (primaryFileName !== null && !files.some(f => f.name === primaryFileName)) {
+    core.setFailed(new Error(`Primary file “${primaryFileName}” is not present in the list of files.`));
+    process.exit(1);
+}
+
+// Expand versions such as 1.21.x
+if (gameVersions.some(v => /^\d+\.\d+\.x$/.test(v))) {
+    core.info("Fetching Mojang versions manifest…");
+    const versionsManifest = await VersionsManifest.fetch();
+    for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/.test(v))) {
+        const index = gameVersions.indexOf(version);
+        const baseVersion = version.slice(0, -2);
+        const versions = versionsManifest.versions.filter(v => v === baseVersion || v.startsWith(baseVersion + "."));
+        gameVersions.splice(index, 1, ...versions);
+    }
+}
+
+// Build the HTTP request
+const formData = new FormData();
+
+formData.set("data", JSON.stringify({
+    name: inputs.name,
+    version_number: inputs.version,
+    changelog,
+    dependencies,
+    game_versions: gameVersions,
+    version_type: inputs.channel,
+    loaders,
+    featured,
+    status: inputs.status,
+    requested_status: requestedStatus,
+    project_id: inputs.project,
+    file_parts: files.map(f => f.name),
+    primary_file: primaryFileName ?? undefined,
+}));
+
+for (const file of files)
+    formData.set(file.name, file, file.name);
+
+const res = await fetch(`https://${inputs.apiDomain}/v2/version`, {
+    method: "POST",
+    headers: {
+        "User-Agent": "github.com/cloudnode-pro/modrinth-publish",
+        Authorization: inputs.token,
+    },
+    body: formData,
+});
+const body = await res.text();
+let parsedBody;
+try {
+    parsedBody = JSON.parse(body);
+}
+catch (err) {
+    parsedBody = body;
+}
+
+if (!res.ok) {
+    core.setFailed(`Modrinth API returned error status ${res.status} (${http.STATUS_CODES[res.status] ?? "unknown"}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
+    process.exit(1);
+}
+
+else {
+    core.setOutput("version-id", parsedBody.id);
+    core.info(`\x1b[32m✔\x1b[0m Successfully uploaded version on Modrinth.\n\tID: ${parsedBody.id}`);
     process.exit(0);
 }
-
-const event: ReleaseEvent = github.context.payload as ReleaseEvent;
-
-const inputs = {
-    token: core.getInput("token", {required: true}),
-    project: core.getInput("project", {required: true}),
-    file: core.getInput("file", {required: true}),
-    changelog: (() => {
-        const input = core.getInput("changelog");
-        return input === "" ? event.release.body ?? "" : input;
-    })(),
-    loaders: (() => {
-        const input = core.getInput("loaders", {required: true});
-        return input.startsWith("[") ? JSON.parse(input) as string[] : input.split(",").map(s => s.trim());
-    })(),
-    dependencies: (() => {
-        const input = core.getInput("dependencies", {required: false});
-        return input === "" ? [] : JSON.parse(input) as {version_id?: string, project_id?: string, file_name?: string, dependency_type: "required" | "optional" | "incompatible" | "embedded"}[]
-    })(),
-} as const;
-
-core.debug("inputs: " + JSON.stringify(inputs));
-
-if (inputs.loaders.length === 0) {
-    core.setFailed("No loaders provided");
-    process.exit(1);
-}
-
-const primaryFile = new FilePointer(inputs.file);
-
-let inferredData: InferData | null;
-try {
-    inferredData = await InferData.fromPluginJar(await primaryFile.read());
-}
-catch (e) {
-    core.setFailed(e as any);
-    process.exit(1);
-}
-
-core.debug("inferred: " + JSON.stringify(inferredData));
-
-if (inferredData === null) {
-    core.setFailed("Could not infer data from plugin jar");
-    process.exit(1);
-}
-
-const res = await new ModrinthCreateVersion(inputs.token, [primaryFile], {
-    name: inferredData.name,
-    version_number: inferredData.version,
-    changelog: inputs.changelog,
-    dependencies: inputs.dependencies,
-    game_versions: inferredData.gameVersions,
-    version_type: inferredData.version.includes("alpha") ? "alpha" : inferredData.version.includes("beta") || inferredData.version.match(/[^A-z](rc)[^A-z]/) || inferredData.version.match(/[^A-z](pre)[^A-z]/) ? "beta" : "release",
-    loaders: inputs.loaders,
-    featured: false,
-    project_id: inputs.project
-}).send();
-core.debug(`Modrinth API\nstatus: ${res.status}\nheaders: ${JSON.stringify(res.headers.entries())}`);
-
-const data = await res.text();
-core.debug(`Modrinth API\nbody: ${data}`);
-
-let json;
-try {
-    json = JSON.parse(data);
-    core.setOutput("version-id", json.id);
-    core.setOutput("version-url", `https://modrinth.com/project/${inputs.project}/version/${json.id}`);
-}
-catch (e) {
-    core.warning(`Failed to parse Modrinth response body: ${e}`);
-}
-process.exit();
