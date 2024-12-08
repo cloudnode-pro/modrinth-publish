@@ -1,0 +1,33 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    "incremental": true,
+    "target": "esnext",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "inlineSourceMap": true,
+    "outDir": "./dist",
+    "declaration": false,
+    "removeComments": false,
+    "importHelpers": true,
+    "importsNotUsedAsValues": "remove",
+    "stripInternal": true,
+    "noEmitOnError": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "skipLibCheck": true
+  }
+}

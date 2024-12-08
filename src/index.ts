@@ -1,27 +1,28 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import * as core from "@actions/core";
+import http from "node:http";
+import core from "@actions/core";
 import {VersionsManifest} from "./VersionsManifest.js";
 
-const GH_INPUTS = JSON.parse(process.env.GH_INPUTS);
+const GH_INPUTS: Record<string, string> = JSON.parse(process.env.GH_INPUTS!);
 
 // Action inputs
 const inputs = {
-    apiDomain: GH_INPUTS["api-domain"],
-    token: GH_INPUTS.token,
-    project: GH_INPUTS.project,
-    name: GH_INPUTS.name,
-    version: GH_INPUTS.version,
-    channel: GH_INPUTS.channel,
-    featured: GH_INPUTS.featured,
-    changelog: GH_INPUTS.changelog,
-    loaders: GH_INPUTS.loaders,
-    gameVersions: GH_INPUTS["game-versions"],
-    files: GH_INPUTS.files,
-    primaryFile: GH_INPUTS["primary-file"],
-    dependencies: GH_INPUTS.dependencies,
-    status: GH_INPUTS.status,
-    requestedStatus: GH_INPUTS["requested-status"]
+    apiDomain: GH_INPUTS["api-domain"]!,
+    token: GH_INPUTS.token!,
+    project: GH_INPUTS.project!,
+    name: GH_INPUTS.name!,
+    version: GH_INPUTS.version!,
+    channel: GH_INPUTS.channel!,
+    featured: GH_INPUTS.featured!,
+    changelog: GH_INPUTS.changelog!,
+    loaders: GH_INPUTS.loaders!,
+    gameVersions: GH_INPUTS["game-versions"]!,
+    files: GH_INPUTS.files!,
+    primaryFile: GH_INPUTS["primary-file"]!,
+    dependencies: GH_INPUTS.dependencies!,
+    status: GH_INPUTS.status!,
+    requestedStatus: GH_INPUTS["requested-status"]!,
 }
 
 // Set input defaults
@@ -37,14 +38,14 @@ if (inputs.channel === "") {
 }
 
 if (inputs.featured === "")
-    inputs.featured = inputs.channel === "release";
+    inputs.featured = inputs.channel === "release" ? "true" : "false";
 
 // Parse inputs
 core.info("Parsing inputs…");
-const featured = typeof inputs.featured === "boolean" ? inputs.featured : inputs.featured === "true";
+const featured = inputs.featured === "true";
 const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
-const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
-const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) : inputs.files.split("\n").map(l => l.trim());
+const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
+const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) as string[] : inputs.files.split("\n").map(l => l.trim());
 const dependencies = JSON.parse(inputs.dependencies);
 
 const changelog = inputs.changelog === "" ? null : inputs.changelog;
@@ -53,7 +54,7 @@ const requestedStatus = inputs.requestedStatus === "" ? null : inputs.requestedS
 
 // Read files
 core.info("Reading files…");
-const fileTypesMap = {
+const fileTypesMap: Record<string, string> = {
     ".mrpack": "application/x-modrinth-modpack+zip",
     ".jar": "application/java-archive",
     ".zip": "application/zip",
@@ -117,16 +118,18 @@ const body = await res.text();
 let parsedBody;
 try {
     parsedBody = JSON.parse(body);
-} catch (err) {
+}
+catch (err) {
     parsedBody = body;
 }
 
 if (!res.ok) {
-    core.setFailed(new Error(`Modrinth API returned error status ${res.status}: ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`));
+    core.setFailed(`Modrinth API returned error status ${res.status} (${http.STATUS_CODES[res.status] ?? "unknown"}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
     process.exit(1);
 }
 
 else {
     core.setOutput("version-id", parsedBody.id);
+    core.info(`\x1b[32m✔\x1b[0m Successfully uploaded version on Modrinth.\n\tID: ${parsedBody.id}`);
     process.exit(0);
 }
