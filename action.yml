@@ -1,5 +1,5 @@
 name: Modrinth Publish
-description: A GitHub workflow for publishing plugin versions to Modrinth
+description: Publish a version on Modrinth
 inputs:
   api-domain:
     required: false
