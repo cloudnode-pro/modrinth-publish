@@ -7,7 +7,7 @@ Publish a version on Modrinth. Works for all Modrinth project types.
 ```yaml
 # …
 steps:
-  - uses: cloudnode-pro/modrinth-publish@2.0.0
+  - uses: cloudnode-pro/modrinth-publish@v2
     with:
       token: ${{ secrets.MODRINTH_TOKEN }}
       # … configure the action using inputs here
@@ -279,7 +279,7 @@ jobs:
         run: mvn -B clean package --file pom.xml
 
       - name: Upload to Modrinth
-        uses: cloudnode-pro/modrinth-publish@2.0.0
+        uses: cloudnode-pro/modrinth-publish@v2
         with:
           # Configure the action as needed. The following is an example.
           token: ${{ secrets.MODRINTH_TOKEN }}
