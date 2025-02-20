@@ -61,12 +61,34 @@ const fileTypesMap: Record<string, string> = {
 };
 
 const files = await Promise.all(filePaths.map(async filePath => {
-    const type = fileTypesMap[path.extname(filePath)];
+    let type = fileTypesMap[path.extname(filePath)];
+
+    // Check if the path is an url
+    if (/^https?:\/\//.test(filePath)) {
+        const res = await fetch(filePath);
+        const data = await res.arrayBuffer();
+        // If available, get a type from the Content-Type header
+        if (res.headers.has('Content-Type')) {
+            type = res.headers.get('Content-Type') || type;
+        }
+
+        // Try to get a file name from the Content-Disposition header
+        let filename = path.basename(filePath)
+        if (res.headers.has("Content-Disposition")) {
+            const header = res.headers.get("Content-Disposition")!;
+            const matches = /filename\*=UTF-8''([^;\n]+)|filename="?([^"\n;]+)"?/i.exec(header);
+            if (matches) {
+                filename = (matches[1] || matches[2]) ?? filename;
+            }
+        }
+        return new File([data], filename, {type});
+    }
+
     const data = await fs.readFile(filePath);
     return new File([data], path.basename(filePath), {type});
 }));
 
-// If primary file is specified, check that it is present
+// If a primary file is specified, check that it is present
 if (primaryFileName !== null && !files.some(f => f.name === primaryFileName)) {
     core.setFailed(new Error(`Primary file “${primaryFileName}” is not present in the list of files.`));
     process.exit(1);
