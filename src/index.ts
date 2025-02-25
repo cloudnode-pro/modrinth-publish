@@ -64,10 +64,11 @@ const files = await Promise.all(filePaths.map(async filePath => {
     const type = fileTypesMap[path.extname(filePath)];
     // Check if the path is an url
     if (/^https?:\/\//.test(filePath)) {
-        const res = await fetch(filePath);
+        const url = new URL(filePath);
+        const res = await fetch(url);
         const data = await res.blob();
 
-        return new File([data], path.basename(filePath));
+        return new File([data], path.basename(url.pathname));
     }
 
     const data = await fs.readFile(filePath);
