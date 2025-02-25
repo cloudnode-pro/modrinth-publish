@@ -65,8 +65,9 @@ const files = await Promise.all(filePaths.map(async filePath => {
     // Check if the path is an url
     if (/^https?:\/\//.test(filePath)) {
         const res = await fetch(filePath);
-        const data = await res.arrayBuffer();
-        return new File([data], path.basename(filePath), {type});
+        const data = await res.blob();
+
+        return new File([data], path.basename(filePath));
     }
 
     const data = await fs.readFile(filePath);
