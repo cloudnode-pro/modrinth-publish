@@ -68,7 +68,7 @@ const files = await Promise.all(filePaths.map(async filePath => {
         const res = await fetch(url);
         const data = await res.blob();
 
-        return new File([data], path.basename(url.pathname));
+        return new File([data], path.basename(url.pathname), {type: data.type});
     }
 
     const data = await fs.readFile(filePath);
