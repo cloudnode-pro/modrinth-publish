@@ -15,10 +15,14 @@ steps:
 
 ## Inputs
 
-### `api-domain`
+### ~~`api-domain`~~ (deprecated)
 
-Modrinth API domain. For testing purposes you can set this to `staging-api.modrinth.com`.
-See [Modrinth Staging Server](https://staging.modrinth.com).
+The Modrinth API domain.
+
+> [!WARNING]
+> The Modrinth Staging API is no longer recommended for testing or as a sandbox. Instead, consider creating a ‘draft’
+> project on the production API and deleting it after testing.
+> This input is scheduled for removal in `v3.0.0`.
 
 <dl>
     <dt>Default</dt>
