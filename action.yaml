@@ -3,8 +3,12 @@ description: Publish a version on Modrinth
 inputs:
   api-domain:
     required: false
-    description: Modrinth API domain. For testing purposes you can set this to `staging-api.modrinth.com`. See [Modrinth Staging Server](https://staging.modrinth.com)
+    description: Modrinth API domain.
     default: api.modrinth.com
+    deprecationMessage: >
+      The Modrinth Staging API is no longer recommended for testing or as a sandbox. Instead, consider creating a
+      ‘draft’ project on the production API and deleting it after testing. This input is scheduled for removal in
+      `v3.0.0`.
   token:
     required: true
     description: Modrinth API token.
