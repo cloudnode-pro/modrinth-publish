@@ -7,7 +7,7 @@ updates:
       day: monday
       time: "06:00"
     reviewers:
-      - cloudnode-pro/development
+      - cloudnode-pro/smp
 
   - package-ecosystem: github-actions
     directory: /
@@ -16,4 +16,4 @@ updates:
       day: monday
       time: "06:00"
     reviewers:
-      - cloudnode-pro/development
+      - cloudnode-pro/smp
