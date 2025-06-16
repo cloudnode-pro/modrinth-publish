@@ -145,8 +145,9 @@ catch (err) {
 }
 
 if (!res.ok) {
-    core.setFailed(`Modrinth API returned error status ${res.status} (${res.statusText}): `
-        + `${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
+    core.setFailed("Modrinth API returned error status"
+        + res.status + (res.statusText !== "" ? ` (${res.statusText})` : "") + ": "
+        + typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2));
     process.exit(1);
 }
 
