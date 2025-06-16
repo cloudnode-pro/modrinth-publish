@@ -6,8 +6,6 @@ updates:
       interval: weekly
       day: monday
       time: "06:00"
-    reviewers:
-      - cloudnode-pro/smp
 
   - package-ecosystem: github-actions
     directory: /
@@ -15,5 +13,3 @@ updates:
       interval: weekly
       day: monday
       time: "06:00"
-    reviewers:
-      - cloudnode-pro/smp
