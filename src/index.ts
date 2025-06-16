@@ -98,7 +98,9 @@ if (gameVersions.some(v => /^\d+\.\d+\.x$/i.test(v))) {
     for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/i.test(v))) {
         const index = gameVersions.indexOf(version);
         const baseVersion = version.slice(0, -2);
-        const versions = versionsManifest.versions.filter(v => v === baseVersion || v.startsWith(baseVersion + "."));
+        const versions = versionsManifest.versions.filter(v =>
+            v === baseVersion || v.startsWith(baseVersion + ".")
+        );
         gameVersions.splice(index, 1, ...versions);
     }
 }
@@ -143,7 +145,8 @@ catch (err) {
 }
 
 if (!res.ok) {
-    core.setFailed(`Modrinth API returned error status ${res.status} (${res.statusText}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
+    core.setFailed(`Modrinth API returned error status ${res.status} (${res.statusText}): `
+        + `${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
     process.exit(1);
 }
 
