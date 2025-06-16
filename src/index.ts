@@ -42,9 +42,20 @@ if (inputs.featured === "")
 // Parse inputs
 core.info("Parsing inputs…");
 const featured = inputs.featured === "true";
-const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
-const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
-const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) as string[] : inputs.files.split("\n").map(l => l.trim());
+
+const loaders = inputs.loaders.startsWith("[")
+                ? JSON.parse(inputs.loaders)
+                : inputs.loaders.split("\n").map(l => l.trim());
+
+const gameVersions = (inputs.gameVersions.startsWith("[")
+                      ? JSON.parse(inputs.gameVersions) as string[]
+                      : inputs.gameVersions.split("\n").map(l => l.trim()))
+    .map(v => v.toLowerCase().trim()).filter(v => v !== "");
+
+const filePaths = inputs.files.startsWith("[")
+                  ? JSON.parse(inputs.files) as string[]
+                  : inputs.files.split("\n").map(l => l.trim());
+
 const dependencies = JSON.parse(inputs.dependencies);
 
 const changelog = inputs.changelog === "" ? null : inputs.changelog;
