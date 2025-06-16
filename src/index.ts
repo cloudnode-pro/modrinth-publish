@@ -30,9 +30,9 @@ if (inputs.name === "")
     inputs.name = inputs.version;
 
 if (inputs.channel === "") {
-    if (/\balpha\b/.test(inputs.version.toLowerCase()))
+    if (/\balpha\b/i.test(inputs.version))
         inputs.channel = "alpha";
-    else if (/\b(rc\d*|pre\d*|beta)\b/.test(inputs.version.toLowerCase()))
+    else if (/\b(rc\d*|pre\d*|beta)\b/i.test(inputs.version))
         inputs.channel = "beta";
     else inputs.channel = "release";
 }
