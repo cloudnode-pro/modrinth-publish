@@ -44,7 +44,7 @@ if (inputs.featured === "")
 core.info("Parsing inputs…");
 const featured = inputs.featured === "true";
 const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
-const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.toLowerCase().trim()).filter(v => v !== "");
+const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.trim()).filter(v => v !== "");
 const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) as string[] : inputs.files.split("\n").map(l => l.trim());
 const dependencies = JSON.parse(inputs.dependencies);
 
@@ -82,10 +82,10 @@ if (primaryFileName !== null && !files.some(f => f.name === primaryFileName)) {
 }
 
 // Expand versions such as 1.21.x
-if (gameVersions.some(v => /^\d+\.\d+\.x$/.test(v))) {
+if (gameVersions.some(v => /^\d+\.\d+\.x$/i.test(v))) {
     core.info("Fetching Mojang versions manifest…");
     const versionsManifest = await VersionsManifest.fetch();
-    for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/.test(v))) {
+    for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/i.test(v))) {
         const index = gameVersions.indexOf(version);
         const baseVersion = version.slice(0, -2);
         const versions = versionsManifest.versions.filter(v => v === baseVersion || v.startsWith(baseVersion + "."));
