@@ -61,7 +61,7 @@ const fileTypesMap: Record<string, string> = {
 
 const files = await Promise.all(filePaths.map(async filePath => {
     const type = fileTypesMap[path.extname(filePath)];
-    // Check if the path is an url
+    // Check if the path is a URL
     if (/^https?:\/\//.test(filePath)) {
         const url = new URL(filePath);
         const res = await fetch(url);
