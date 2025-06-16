@@ -1,7 +1,6 @@
+import core from "@actions/core";
 import fs from "node:fs/promises";
 import path from "node:path";
-import http from "node:http";
-import core from "@actions/core";
 import {VersionsManifest} from "./VersionsManifest.js";
 
 const GH_INPUTS: Record<string, string> = JSON.parse(process.env.GH_INPUTS!);
@@ -133,7 +132,7 @@ catch (err) {
 }
 
 if (!res.ok) {
-    core.setFailed(`Modrinth API returned error status ${res.status} (${http.STATUS_CODES[res.status] ?? "unknown"}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
+    core.setFailed(`Modrinth API returned error status ${res.status} (${res.statusText}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
     process.exit(1);
 }
 
