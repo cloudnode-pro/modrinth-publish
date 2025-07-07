@@ -1,7 +1,6 @@
+import core from "@actions/core";
 import fs from "node:fs/promises";
 import path from "node:path";
-import http from "node:http";
-import core from "@actions/core";
 import {VersionsManifest} from "./VersionsManifest.js";
 
 const GH_INPUTS: Record<string, string> = JSON.parse(process.env.GH_INPUTS!);
@@ -30,9 +29,9 @@ if (inputs.name === "")
     inputs.name = inputs.version;
 
 if (inputs.channel === "") {
-    if (/\balpha\b/.test(inputs.version.toLowerCase()))
+    if (/\balpha\b/i.test(inputs.version))
         inputs.channel = "alpha";
-    else if (/\b(rc\d*|pre\d*|beta)\b/.test(inputs.version.toLowerCase()))
+    else if (/\b(rc\d*|pre\d*|beta)\b/i.test(inputs.version))
         inputs.channel = "beta";
     else inputs.channel = "release";
 }
@@ -43,9 +42,20 @@ if (inputs.featured === "")
 // Parse inputs
 core.info("Parsing inputs…");
 const featured = inputs.featured === "true";
-const loaders = inputs.loaders.startsWith("[") ? JSON.parse(inputs.loaders) : inputs.loaders.split("\n").map(l => l.trim());
-const gameVersions = (inputs.gameVersions.startsWith("[") ? JSON.parse(inputs.gameVersions) as string[] : inputs.gameVersions.split("\n").map(l => l.trim())).map(v => v.trim()).filter(v => v !== "");
-const filePaths = inputs.files.startsWith("[") ? JSON.parse(inputs.files) as string[] : inputs.files.split("\n").map(l => l.trim());
+
+const loaders = inputs.loaders.startsWith("[")
+                ? JSON.parse(inputs.loaders)
+                : inputs.loaders.split("\n").map(l => l.trim());
+
+const gameVersions = (inputs.gameVersions.startsWith("[")
+                      ? JSON.parse(inputs.gameVersions) as string[]
+                      : inputs.gameVersions.split("\n").map(l => l.trim()))
+    .map(v => v.trim()).filter(v => v !== "");
+
+const filePaths = inputs.files.startsWith("[")
+                  ? JSON.parse(inputs.files) as string[]
+                  : inputs.files.split("\n").map(l => l.trim());
+
 const dependencies = JSON.parse(inputs.dependencies);
 
 const changelog = inputs.changelog === "" ? null : inputs.changelog;
@@ -62,7 +72,7 @@ const fileTypesMap: Record<string, string> = {
 
 const files = await Promise.all(filePaths.map(async filePath => {
     const type = fileTypesMap[path.extname(filePath)];
-    // Check if the path is an url
+    // Check if the path is a URL
     if (/^https?:\/\//.test(filePath)) {
         const url = new URL(filePath);
         const res = await fetch(url);
@@ -88,7 +98,9 @@ if (gameVersions.some(v => /^\d+\.\d+\.x$/i.test(v))) {
     for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/i.test(v))) {
         const index = gameVersions.indexOf(version);
         const baseVersion = version.slice(0, -2);
-        const versions = versionsManifest.versions.filter(v => v === baseVersion || v.startsWith(baseVersion + "."));
+        const versions = versionsManifest.versions.filter(v =>
+            v === baseVersion || v.startsWith(baseVersion + ".")
+        );
         gameVersions.splice(index, 1, ...versions);
     }
 }
@@ -133,7 +145,9 @@ catch (err) {
 }
 
 if (!res.ok) {
-    core.setFailed(`Modrinth API returned error status ${res.status} (${http.STATUS_CODES[res.status] ?? "unknown"}): ${typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2)}`);
+    core.setFailed("Modrinth API returned error status"
+        + res.status + (res.statusText !== "" ? ` (${res.statusText})` : "") + ": "
+        + typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody, null, 2));
     process.exit(1);
 }
 
