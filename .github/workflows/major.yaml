@@ -25,7 +25,7 @@ jobs:
 
       - name: Find major tag
         id: major-tag
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           result-encoding: string
           script: |
@@ -44,7 +44,7 @@ jobs:
 
       - name: Create major version tag
         if: steps.major-tag.outputs.result == '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.git.createRef({
@@ -55,7 +55,7 @@ jobs:
 
       - name: Move major version tag
         if: steps.major-tag.outputs.result == '1'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.git.updateRef({
