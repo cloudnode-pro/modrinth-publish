@@ -86,9 +86,12 @@ The release channel for this version.
 
 ***
 
-### `featured`
+### ~~`featured`~~ (deprecated)
 
 Whether the version is featured or not.
+
+> [!WARNING]
+> Modrinth has deprecated featured versions and ignores this option. This input is scheduled for removal in `v3.0.0`.
 
 <dl>
     <dt>Allowed values</dt>

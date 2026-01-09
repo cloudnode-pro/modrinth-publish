@@ -27,6 +27,9 @@ inputs:
   featured:
     required: false
     description: Whether the version is featured or not. If not set, defaults to `true` if the release channel is `release`, otherwise `false`.
+    deprecationMessage: >
+      Modrinth has deprecated featured versions and ignores this option. This input is scheduled for removal
+      in `v3.0.0`.
   changelog:
     required: false
     description: The changelog for this version.
