@@ -258,6 +258,10 @@ The allowed file extensions are `.mrpack`, `.jar`, `.zip`, `.litemod`, `.asc`, `
 > Supplementary files are for supporting resources like source code and documentation, not for alternative versions or
 > variants.
 
+> [!NOTE]
+> If you specify an HTTP URL, the action downloads the file during workflow execution and uploads it to Modrinth as a
+> regular static file. Users downloading the version will get the file from Modrinth, not from the URL.
+
 Format each file on a new line or use a JSON string array.
 
 <dl>
