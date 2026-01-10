@@ -251,7 +251,7 @@ game-versions: '["1.19.4", "1.20.x", "25w45a", "1.21.x", "26.1-snapshot-1"]'
 
 ### `files` (required unless draft)
 
-One or more file paths to upload. You can also use HTTP URLs. This is optional if the status is `draft`.
+One or more file paths or HTTP URLs to upload. This input is optional when the [`status`](#status) is `draft`.
 
 The allowed file extensions are `.mrpack`, `.jar`, `.zip`, `.litemod`, `.asc`, `.gpg`, and `.sig`.
 
