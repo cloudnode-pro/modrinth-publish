@@ -5,54 +5,102 @@ inputs:
     required: false
     description: Modrinth API domain.
     default: api.modrinth.com
-    deprecationMessage: >
-      The Modrinth Staging API is no longer recommended for testing or as a sandbox. Instead, consider creating a
-      ‘draft’ project on the production API and deleting it after testing. This input is scheduled for removal in
-      `v3.0.0`.
+    deprecationMessage: >-
+      The Modrinth Staging API is no longer recommended for testing or as a sandbox.
+      Instead, consider creating a ‘draft’ project on the production API and deleting it after testing.
+      This input is scheduled for removal in `v3.0.0`.
   token:
     required: true
-    description: Modrinth API token.
+    description: >-
+      A personal access token for the Modrinth API with Create versions scope.
+      It’s strongly recommended to store this in a GitHub Repository Secret.
   project:
     required: true
-    description: The ID of the project this version is for.
+    description: The Modrinth project ID that the version belongs to.
   name:
     required: false
-    description: The name of this version.
+    description: >-
+      The name of this version. The Modrinth UI usually names versions ‘YourProject 1.2.3’.
+      You can use the version name to provide a very brief summary of the version/changelog.
   version:
     required: true
-    description: The version number. Ideally will follow semantic versioning.
+    description: The version number, ideally following semantic versioning.
   channel:
     required: false
-    description: The release channel for this version (`release`, `beta`, or `alpha`). If not specified, will be inferred from the version number (based on whether it contains `alpha`, `beta`, `rc`, `pre`).
+    description: |-
+      The release channel for this version.
+      
+      Allowed values: `release`, `beta`, `alpha`
+      Default: inferred from the `version` input:
+      
+      - If version includes ‘alpha’, will be set to `alpha`.
+      - If version includes ‘beta’, ‘rc’, or ‘pre’, will be set to `beta`.
+      - Otherwise, will be set to `release`.
   featured:
     required: false
-    description: Whether the version is featured or not. If not set, defaults to `true` if the release channel is `release`, otherwise `false`.
-    deprecationMessage: >
-      Modrinth has deprecated featured versions and ignores this option. This input is scheduled for removal
-      in `v3.0.0`.
+    description: >-
+      Whether the version is featured or not.
+      If not set, defaults to `true` if the release channel is `release`, otherwise `false`.
+    deprecationMessage: >-
+      Modrinth has deprecated featured versions and ignores this option.
+      This input is scheduled for removal in `v3.0.0`.
   changelog:
     required: false
-    description: The changelog for this version.
+    description: Text describing the changes in this version. You can use Markdown formatting.
   loaders:
     required: true
-    description: The mod loaders that this version supports, separated by new line, or as JSON string array. In case of resource packs, use `minecraft`.
+    description: >-
+      List of supported loaders for this version. Format each loader on a new line or use a JSON string array.
   game-versions:
     required: false
-    description: A list of versions of Minecraft that this version supports, separated by new line, or as JSON string array. You can also use e.g. `1.20.x`, `1.21.x`, ….
+    description: >-
+      List of supported Minecraft versions. You can use patterns like `1.21.x` and `26.1.x`.
+      Format each version on anew line or use a JSON string array.
     default: "[]"
   files:
     required: true
-    description: A list of file paths to upload, separated by new line, or as JSON string array. There must be at least one file, unless the new version’s status is `draft`. The allowed file extensions are `.mrpack`, `.jar`, `.zip`, and `.litemod`.
+    description: >-
+      One or more file paths or HTTP URLs to upload. This input is optional when the status is `draft`.
+      The allowed file extensions are .mrpack, .jar, .zip, .litemod, .asc, .gpg, and .sig.
   primary-file:
     required: false
-    description: The name (not path) from `files` to be set as the primary file.
+    description: >-
+      The name (not path) of the file from files to designate as primary.
+      If you used HTTP URLs, the name is considered the last path component, e.g. name in https://example.com/foo/name.
+      
+      Supplementary files are for supporting resources like source code and documentation,
+      not for alternative versions or variants.
+      
+      If you specify an HTTP URL, the action downloads the file during workflow execution and uploads it to Modrinth as
+      a regular static file. Users downloading the version will get the file from Modrinth, not from the URL.
+      
+      Format each file on a new line or use a JSON string array.
   dependencies:
     required: false
-    description: A list of specific versions of projects that this version depends on, formatted as JSON array. See [Create Version - Modrinth API docs](https://docs.modrinth.com/api/operations/createversion/#request-body).
+    description: >-
+      List of dependencies for this version, formatted as a JSON array of objects with the following properties:
+      
+      - `dependency_type` (required): The type of the dependency.
+      Possible values: `required`, `optional`, `incompatible`, `embedded`.
+      
+      - `project_id`: The ID of a Modrinth project. Exclusive with `file_name`.
+      
+      - `version_id`: The ID of the specific dependency version.
+      If not specified, means any version of the `project_id`. Exclusive with `file_name`.
+      
+      - `file_name`: The name of a file relating to an external (non-Modrinth) dependency.
+      Exclusive with `project_id` and `version_id`.
     default: "[]"
   status:
     required: false
-    description: Allowed values are `listed`, `archived`, `draft`, `unlisted`, `scheduled`, `unknown`.
+    description: |-
+      The status of the version.
+      
+      - `listed` (default): Public and visible to anyone.
+      - `archived`: Identical to `listed` but shows a message that the version is not supported.
+      - `draft`: Not public and can only be accessed by project members.
+      - `unlisted`: Not shown in the project’s versions list, but can be publicly accessed via direct URL.
+      - `scheduled`: Not public, but scheduled to be released in the future.
     default: "listed"
   requested-status:
     required: false
