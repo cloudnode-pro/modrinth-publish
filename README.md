@@ -443,7 +443,7 @@ The status of the version.
 
 The Modrinth API domain.
 
-> [!WARNING]
+> #### ⚠ Warning
 > The Modrinth Staging API is no longer recommended for testing or as a sandbox. Instead, consider creating a ‘draft’
 > project on the production API and deleting it after testing.
 > This input is scheduled for removal in `v3.0.0`.
@@ -459,7 +459,7 @@ The Modrinth API domain.
 
 Whether the version is featured or not.
 
-> [!WARNING]
+> #### ⚠ Warning
 > Modrinth has deprecated featured versions and ignores this option. This input is scheduled for removal in `v3.0.0`.
 
 <dl>
@@ -473,7 +473,7 @@ Whether the version is featured or not.
 
 ### ~~`requested-status`~~ (deprecated)
 
-> [!WARNING]
+> #### ⚠ Warning
 > Modrinth has deprecated this option and ignores it. This input is scheduled for removal in `v3.0.0`.
 
 <dl>
