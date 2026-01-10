@@ -51,17 +51,18 @@ Format each loader on a new line or use a JSON string array.
     <dd>
 
 ```yaml
-loaders: paper
+loaders: fabric
 ```
 
 ```yaml
 loaders: |-
-  fabric
-  forge
+  paper
+  spigot
+  bukkit
 ```
 
 ```yaml
-loaders: '["fabric", "forge"]'
+loaders: '["paper", "spigot", "bukkit"]'
 ```
 
 </dd>
