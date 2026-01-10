@@ -232,7 +232,10 @@ dependencies: |-
 
 ***
 
-### `requested-status`
+### ~~`requested-status~~ (deprecated)
+
+> [!WARNING]
+> Modrinth has deprecated this option and ignores it. This input is scheduled for removal in `v3.0.0`.
 
 <dl>
     <dt>Allowed values</dt>
