@@ -345,7 +345,8 @@ The release channel for this version.
 
 ### `changelog`
 
-Text describing the changes in this version. You can use [Markdown](https://commonmark.org/help/).
+Text describing the changes in this version. You can
+use [Markdown formatting](https://support.modrinth.com/articles/8801962).
 
 <dl>
     <dt>Default</dt>
