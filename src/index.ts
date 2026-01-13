@@ -40,6 +40,9 @@ if (inputs.channel === "") {
 if (inputs.featured === "")
     inputs.featured = inputs.channel === "release" ? "true" : "false";
 
+if (inputs.fileTypes === "")
+    inputs.fileTypes = "{}";
+
 // Parse inputs
 core.info("Parsing inputs…");
 const featured = inputs.featured === "true";

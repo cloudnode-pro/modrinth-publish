@@ -94,6 +94,7 @@ inputs:
       Your public key should be published on a public OpenPGP key server, such as keys.openpgp.org.
       
       Format each entry on a new line as <name>=<type> or use a JSON object.
+    default: "{}"
   dependencies:
     required: false
     description: >-
