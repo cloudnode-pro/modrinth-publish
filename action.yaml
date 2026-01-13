@@ -75,6 +75,25 @@ inputs:
       a regular static file. Users downloading the version will get the file from Modrinth, not from the URL.
       
       Format each file on a new line or use a JSON string array.
+  file-types:
+    required: false
+    description: >-
+      Map of supplementary file names (not paths) to their types.
+      If you used HTTP URLs, the name is considered the last path component, e.g. name in https://example.com/foo/name.
+      
+      - `required-resource-pack`: A resource pack .zip file which is required for this version to work correctly.
+      
+      - `optional-resource-pack`: An optional resource pack .zip file which this version can use.
+      
+      - `sources-jar`: A .jar file containing source code, typically ending in -sources.jar.
+      
+      - `javadoc-jar`: A .jar file containing Javadoc documentation, typically ending in -javadoc.jar.
+      
+      - `signature`: A PGP signature for a file as either .asc, .sig, or .gpg.
+      The name typically contains the name of the file that is signed, e.g. YourProject-1.2.3.jar.asc.
+      Your public key should be published on a public OpenPGP key server, such as keys.openpgp.org.
+      
+      Format each entry on a new line as <name>=<type> or use a JSON object.
   dependencies:
     required: false
     description: >-
