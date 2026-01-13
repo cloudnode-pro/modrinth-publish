@@ -19,6 +19,7 @@ const inputs = {
     gameVersions: GH_INPUTS["game-versions"]!,
     files: GH_INPUTS.files!,
     primaryFile: GH_INPUTS["primary-file"]!,
+    fileTypes: GH_INPUTS["file-types"]!,
     dependencies: GH_INPUTS.dependencies!,
     status: GH_INPUTS.status!,
     requestedStatus: GH_INPUTS["requested-status"]!,
@@ -68,10 +69,12 @@ const fileTypesMap: Record<string, string> = {
     ".mrpack": "application/x-modrinth-modpack+zip",
     ".jar": "application/java-archive",
     ".zip": "application/zip",
+    ".litemod": "application/zip",
+    ".asc": "application/pgp-signature",
+    ".sig": "application/pgp-signature"
 };
 
 const files = await Promise.all(filePaths.map(async filePath => {
-    const type = fileTypesMap[path.extname(filePath)];
     // Check if the path is a URL
     if (/^https?:\/\//.test(filePath)) {
         const url = new URL(filePath);
@@ -82,8 +85,38 @@ const files = await Promise.all(filePaths.map(async filePath => {
     }
 
     const data = await fs.readFile(filePath);
+    const type = fileTypesMap[path.extname(filePath)];
     return new File([data], path.basename(filePath), {type});
 }));
+
+const FILE_TYPES = [
+    "required-resource-pack",
+    "optional-resource-pack",
+    "sources-jar",
+    "javadoc-jar",
+    "dev-jar",
+    "signature"
+];
+
+const fileTypes = inputs.fileTypes.startsWith("{")
+    ? JSON.parse(inputs.fileTypes) as Record<string, string>
+    : inputs.fileTypes.split("\n").reduce((acc, l) => {
+        const delimiterIndex = l.lastIndexOf("=");
+
+        const name = l.slice(0, delimiterIndex).trim();
+        if (!files.some(f => f.name === name)) {
+            core.setFailed(new Error(`Unknown file named “${name}” cannot be assigned a type`));
+            process.exit(1);
+        }
+
+        const type = l.slice(delimiterIndex + 1).trim();
+        if (!FILE_TYPES.includes(type)) {
+            core.setFailed(new Error(`Unknown type “${type}” specified for ${name}`));
+        }
+
+        acc[name] = type;
+        return acc;
+    }, {} as Record<string, string>);
 
 // If a primary file is specified, check that it is present
 if (primaryFileName !== null && !files.some(f => f.name === primaryFileName)) {
@@ -122,6 +155,7 @@ formData.set("data", JSON.stringify({
     project_id: inputs.project,
     file_parts: files.map(f => f.name),
     primary_file: primaryFileName ?? undefined,
+    file_types: fileTypes,
 }));
 
 for (const file of files)

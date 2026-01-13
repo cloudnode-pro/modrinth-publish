@@ -253,7 +253,8 @@ game-versions: '["1.19.4", "1.20.x", "25w45a", "1.21.x", "26.1-snapshot-1"]'
 
 One or more file paths or HTTP URLs to upload. This input is optional when the [`status`](#status) is `draft`.
 
-The allowed file extensions are `.mrpack`, `.jar`, `.zip`, `.litemod`, `.asc`, `.gpg`, and `.sig`.
+The allowed file extensions are `.mrpack`, `.jar`, `.zip`, and `.litemod`. For [file types](#file-types) `signature`,
+the valid extensions are `.asc`, `.sig`, and `.gpg`.
 
 > [!NOTE]
 > Supplementary files are for supporting resources like source code and documentation, not for alternative versions or
@@ -298,6 +299,60 @@ URLs, the name is considered the last path component, e.g. `name` in `https://ex
     <dt>Example</dt>
     <dd><code>YourProject-1.2.3.jar</code></dd>
 </dl>
+
+***
+
+### `file-types`
+
+Map of supplementary file names (not paths) to their types. If you used HTTP URLs, the name is considered the last path
+component, e.g. `name` in `https://example.com/foo/name`.
+
+<details open>
+<summary>File types</summary>
+<dl>
+<dt><code>required-resource-pack</code></dt>
+<dd>A resource pack <code>.zip</code> file which is required for this version to work correctly.</dd>
+
+<dt><code>optional-resource-pack</code></dt>
+<dd>An optional resource pack <code>.zip</code> file which this version can use.</dd>
+
+<dt><code>sources-jar</code></dt>
+<dd>A <code>.jar</code> file containing source code, typically ending in <code>-sources.jar</code>.</dd>
+
+<dt><code>javadoc-jar</code></dt>
+<dd>A <code>.jar</code> file containing Javadoc documentation, typically ending in <code>-javadoc.jar</code>.</dd>
+
+<dt><code>signature</code></dt>
+<dd>A PGP signature for a file as either <code>.asc</code>, <code>.sig</code>, or <code>.gpg</code>.
+The name typically contains the name of the file that is signed, e.g. <code>YourProject-1.2.3.jar.asc</code>.
+Your public key should be published on a public OpenPGP key server,
+such as <a href="https://keys.openpgp.org/" target="_blank">keys.openpgp.org</a>.</dd>
+</dl>
+</details>
+
+Format each entry on a new line as `<name>=<type>` or use a JSON object.
+
+<dl>
+    <dt>Example</dt>
+    <dd>
+
+```yaml
+file-types: YourProject-1.2.3.jar.asc=signature
+```
+
+```yaml
+file-types:
+  YourProject-1.2.3.jar.asc=signature
+  resource-pack.zip=required-resource-pack
+```
+
+```yaml
+file-types: |-
+  {
+    "YourProject-1.2.3.jar.asc": "signature",
+    "resource-pack.zip": "required-resource-pack"
+  }
+```
 
 ***
 
