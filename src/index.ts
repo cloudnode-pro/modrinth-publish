@@ -1,4 +1,4 @@
-import core from "@actions/core";
+import * as core from "@actions/core";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {VersionsManifest} from "./VersionsManifest.js";
