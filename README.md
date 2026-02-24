@@ -341,7 +341,7 @@ file-types: YourProject-1.2.3.jar.asc=signature
 ```
 
 ```yaml
-file-types:
+file-types: |-
   YourProject-1.2.3.jar.asc=signature
   resource-pack.zip=required-resource-pack
 ```
