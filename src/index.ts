@@ -139,6 +139,17 @@ if (gameVersions.some(v => /^\d+\.\d+\.x$/i.test(v))) {
         );
         gameVersions.splice(index, 1, ...versions);
     }
+} else if (gameVersions.some(v => />=.*/i.test(v))) {
+    core.info("Fetching Mojang versions manifest…");
+    const versionsManifest = await VersionsManifest.fetch();
+    for (const version of gameVersions.filter(v => />=.*/i.test(v))) {
+        let index = versionsManifest.versions.indexOf(version.slice(2));
+        if (index === -1) {
+            core.warning(`Version ${version} not found in Mojang versions manifest, skipping…`);
+            continue;
+        }
+        gameVersions.splice(index, 1, ...versionsManifest.versions.splice(0, index + 1));
+    }
 }
 
 // Build the HTTP request

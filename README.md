@@ -219,7 +219,7 @@ loaders: '["paper", "spigot", "bukkit"]'
 
 ### `game-versions` (required)
 
-List of supported Minecraft versions. You can use patterns like `1.21.x` and `26.1.x`.
+List of supported Minecraft versions. You can use patterns like `1.21.x` and `26.1.x` also a version range like `>=1.19` works.
 
 Format each version on a new line or use a JSON string array.
 
@@ -229,6 +229,10 @@ Format each version on a new line or use a JSON string array.
 
 ```yaml
 game-versions: 1.21.x
+```
+
+```yaml
+game-versions: >=1.19
 ```
 
 ```yaml
