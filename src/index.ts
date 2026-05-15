@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as semver from "semver";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {VersionsManifest} from "./VersionsManifest.js";
@@ -127,17 +128,36 @@ if (primaryFileName !== null && !files.some(f => f.name === primaryFileName)) {
     process.exit(1);
 }
 
-// Expand versions such as 1.21.x
-if (gameVersions.some(v => /^\d+\.\d+\.x$/i.test(v))) {
+// Interpret version ranges such as 1.21.x || >= 26.1
+const versionRanges = gameVersions
+    .reduce<[index: number, range: string][]>((acc, v, i) => {
+        // exclude exact versions (non-ranges)
+        // coerce(1.21) → 1.21.0; this is checked because Mojang doesn’t actually follow SemVer (elides .0 patch)
+        const coerced = semver.coerce(v, {includePrerelease: true})?.version;
+        if (coerced === v || coerced === v + ".0") {
+            return acc;
+        }
+
+        const r = semver.validRange(v);
+        if (r !== null) {
+            acc.push([i, r]);
+        }
+        return acc;
+    }, []);
+
+if (versionRanges.length > 0) {
     core.info("Fetching Mojang versions manifest…");
     const versionsManifest = await VersionsManifest.fetch();
-    for (const version of gameVersions.filter(v => /^\d+\.\d+\.x$/i.test(v))) {
-        const index = gameVersions.indexOf(version);
-        const baseVersion = version.slice(0, -2);
-        const versions = versionsManifest.versions.filter(v =>
-            v === baseVersion || v.startsWith(baseVersion + ".")
-        );
-        gameVersions.splice(index, 1, ...versions);
+
+    for (const [i] of versionRanges.toReversed()) {
+        gameVersions.splice(i, 1);
+    }
+
+    for (const v of versionsManifest.versions) {
+        const coerced = semver.coerce(v);
+        if (coerced !== null && versionRanges.some(([, r]) => semver.satisfies(coerced, r))) {
+            gameVersions.push(v);
+        }
     }
 }
 
