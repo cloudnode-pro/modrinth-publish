@@ -219,9 +219,38 @@ loaders: '["paper", "spigot", "bukkit"]'
 
 ### `game-versions` (required)
 
-List of supported Minecraft versions. You can use patterns like `1.21.x` and `26.1.x`.
+List of supported Minecraft versions. You can specify both exact versions and version ranges.
 
 Format each version on a new line or use a JSON string array.
+
+<details>
+<summary>Version ranges syntax</summary>
+
+> **Note**: Version ranges do not include snapshot versions.
+
+| Examples <small>(equivalent)</small>                     | Description                                                 | Result <small>(*latest version as of writing is 26.1.2*)</small> |
+|----------------------------------------------------------|-------------------------------------------------------------|------------------------------------------------------------------|
+| `1.21.x`, `=1.21`                                        | Patch versions of 1.21                                      | `1.21`, `1.21.1`, …, `1.21.11`                                   |
+| `>=1.21.6`                                               | Versions equal or newer than 1.21.6                         | `1.21.6`, `1.21.7`, …, `26.1.2`                                  |
+| `>1.21.6`                                                | Versions newer than 1.21.6                                  | `1.21.7`, `1.21.8`, …, `26.1.2`                                  |
+| `>1.20.0`<sup>[*](#note-semver)</sup>                    | Versions newer than 1.20                                    | `1.20.1`, `1.20.2`, …, `26.1.2`                                  |
+| `>1.20`, `>1.20.6`, `>=1.21`                             | Versions newer than any 1.20 version                        | `1.21`, `1.21.1`, …, `26.1.2`                                    |
+| `>=1.20 < 26`, `1.20 - 26.0`<sup>[*](#note-semver)</sup> | Versions between 1.20 (inclusive) and 26 (exclusive)        | `1.20`, `1.20.1`, …, `1.21.11`                                   |
+| `1.20 - 26`                                              | Versions between 1.20 and 26 (including all versions of 26) | `1.20`, …, `26.1.1`, `26.1.2`                                    |
+
+> <a name="note-semver"></a><b>*</b> **Note**: In version ranges (only), versions with no patch version (3rd number),
+> e.g. `1.21` and `26.1`, are equivalent to `1.21.x` and `26.1.x` respectively. To specify the literal Mojang version
+> `1.21` or `26.1`, add `.0`, i.e. `1.21.0` and `26.1.0`.
+>
+> The same applies if the minor version (2nd number) is omitted, i.e. `26` is equivalent to `26.x`. To specify the first
+> version of 26, use `26.1.0` or `26.0`.
+>
+> See also: [SemVer Ranges](https://github.com/npm/node-semver?tab=readme-ov-file#ranges).
+>
+> <small>This is because Mojang does not follow standard [semantic versioning](https://semver.org/), but for simplicity
+> version ranges here are treated as such.</small>
+
+</details>
 
 <dl>
     <dt>Example</dt>
