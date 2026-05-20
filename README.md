@@ -219,7 +219,7 @@ loaders: '["paper", "spigot", "bukkit"]'
 
 ### `game-versions` (required)
 
-List of supported Minecraft versions. You can specify both exact versions.
+List of supported Minecraft versions. You can specify both exact versions and version ranges.
 
 Format each version on a new line or use a JSON string array.
 
