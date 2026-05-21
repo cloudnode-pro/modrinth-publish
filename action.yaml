@@ -133,8 +133,6 @@ outputs:
 runs:
   using: docker
   image: docker://ghcr.io/cloudnode-pro/modrinth-publish:2.3.4
-  env:
-    GH_INPUTS: ${{ toJSON(inputs) }}
 branding:
   icon: upload-cloud
   color: green
