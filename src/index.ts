@@ -4,26 +4,24 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import {VersionsManifest} from "./VersionsManifest.js";
 
-const GH_INPUTS: Record<string, string> = JSON.parse(process.env.GH_INPUTS!);
-
 // Action inputs
 const inputs = {
-    apiDomain: GH_INPUTS["api-domain"]!,
-    token: GH_INPUTS.token!,
-    project: GH_INPUTS.project!,
-    name: GH_INPUTS.name!,
-    version: GH_INPUTS.version!,
-    channel: GH_INPUTS.channel!,
-    featured: GH_INPUTS.featured!,
-    changelog: GH_INPUTS.changelog!,
-    loaders: GH_INPUTS.loaders!,
-    gameVersions: GH_INPUTS["game-versions"]!,
-    files: GH_INPUTS.files!,
-    primaryFile: GH_INPUTS["primary-file"]!,
-    fileTypes: GH_INPUTS["file-types"]!,
-    dependencies: GH_INPUTS.dependencies!,
-    status: GH_INPUTS.status!,
-    requestedStatus: GH_INPUTS["requested-status"]!,
+    apiDomain: process.env["INPUT_API-DOMAIN"]!,
+    token: process.env.INPUT_TOKEN!,
+    project: process.env.INPUT_PROJECT!,
+    name: process.env.INPUT_NAME!,
+    version: process.env.INPUT_VERSION!,
+    channel: process.env.INPUT_CHANNEL!,
+    featured: process.env.INPUT_FEATURED!,
+    changelog: process.env.INPUT_CHANGELOG!,
+    loaders: process.env.INPUT_LOADERS!,
+    gameVersions: process.env["INPUT_GAME-VERSIONS"]!,
+    files: process.env.INPUT_FILES!,
+    primaryFile: process.env["INPUT_PRIMARY-FILE"]!,
+    fileTypes: process.env["INPUT_FILE-TYPES"]!,
+    dependencies: process.env.INPUT_DEPENDENCIES!,
+    status: process.env.INPUT_STATUS!,
+    requestedStatus: process.env["INPUT_REQUESTED-STATUS"]!,
 }
 
 // Set input defaults
