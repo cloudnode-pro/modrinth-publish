@@ -19,6 +19,7 @@ const inputs = {
     files: process.env.INPUT_FILES!,
     primaryFile: process.env["INPUT_PRIMARY-FILE"]!,
     fileTypes: process.env["INPUT_FILE-TYPES"]!,
+    environment: process.env.INPUT_ENVIRONMENT!,
     dependencies: process.env.INPUT_DEPENDENCIES!,
     status: process.env.INPUT_STATUS!,
     requestedStatus: process.env["INPUT_REQUESTED-STATUS"]!,
@@ -63,6 +64,7 @@ const dependencies = JSON.parse(inputs.dependencies);
 
 const changelog = inputs.changelog === "" ? null : inputs.changelog;
 const primaryFileName = inputs.primaryFile === "" ? null : inputs.primaryFile;
+const environment = inputs.environment === "" ? undefined : inputs.environment;
 const requestedStatus = inputs.requestedStatus === "" ? null : inputs.requestedStatus;
 
 // Read files
@@ -175,6 +177,7 @@ formData.set("data", JSON.stringify({
     requested_status: requestedStatus,
     project_id: inputs.project,
     file_parts: files.map(f => f.name),
+    environment,
     primary_file: primaryFileName ?? undefined,
     file_types: fileTypes,
 }));

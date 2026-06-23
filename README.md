@@ -331,6 +331,49 @@ URLs, the name is considered the last path component, e.g. `name` in `https://ex
 
 ***
 
+### `environment`
+
+The environment compatibility of this version.
+
+<details>
+<summary>Available environments</summary>
+
+<dl>
+<dt><code>client_only</code></dt>
+<dd>All functionality is client-side and is compatible with vanilla servers.</dd>
+
+<dt><code>server_only</code></dt>
+<dd>All functionality is server-side and is compatible with vanilla clients. Also works in singleplayer.</dd>
+
+<dt><code>dedicated_server_only</code></dt>
+<dd>All functionality is server-side and is compatible with vanilla clients. Does not work in singleplayer.</dd>
+
+<dt><code>singleplayer_only</code></dt>
+<dd>All functionality is client-side and only works on singleplayer worlds (not on multiplayer servers).</dd>
+
+<dt><code>client_and_server</code></dt>
+<dd>Requires installation on both the client and server to function.</dd>
+
+<dt><code>client_only_server_optional</code></dt>
+<dd>Must be installed on the client, but can also be installed on the server for enhanced functionality.</dd>
+
+<dt><code>server_only_client_optional</code></dt>
+<dd>Must be installed on the server, but can also be installed on the client for enhanced functionality.</dd>
+
+<dt><code>client_or_server_prefers_both</code></dt>
+<dd>Can be installed on just the client or just the server, but functionality is enhanced when installed on both.</dd>
+
+<dt><code>client_or_server</code></dt>
+<dd>Can be installed on just the client or just the server, with full functionality on either. There is no reason to install it on both.</dd>
+
+<dt><code>unknown</code></dt>
+<dd>The environment compatibility has not been specified.</dd>
+
+</dl>
+</details>
+
+***
+
 ### `file-types`
 
 Map of supplementary file names (not paths) to their types. If you used HTTP URLs, the name is considered the last path
