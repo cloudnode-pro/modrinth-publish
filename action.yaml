@@ -95,6 +95,9 @@ inputs:
       
       Format each entry on a new line as <name>=<type> or use a JSON object.
     default: "{}"
+  environment:
+    required: false
+    description: The environment compatibility of this version.
   dependencies:
     required: false
     description: >-
