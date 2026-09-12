@@ -16,7 +16,7 @@
     "declaration": false,
     "removeComments": false,
     "importHelpers": true,
-    "importsNotUsedAsValues": "remove",
+    "verbatimModuleSyntax": true,
     "stripInternal": true,
     "noEmitOnError": true,
     "allowSyntheticDefaultImports": true,
