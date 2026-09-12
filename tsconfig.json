@@ -16,7 +16,6 @@
     "declaration": false,
     "removeComments": false,
     "importHelpers": true,
-    "importsNotUsedAsValues": "remove",
     "stripInternal": true,
     "noEmitOnError": true,
     "allowSyntheticDefaultImports": true,
